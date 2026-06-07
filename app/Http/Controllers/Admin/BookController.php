@@ -50,11 +50,11 @@ class BookController extends Controller
         $data['cover_image_public_id'] = null;
 
         if ($request->hasFile('cover_image')) {
-            $uploaded = Cloudinary::upload($request->file('cover_image')->getRealPath(), [
+            $uploaded = Cloudinary::uploadApi()->upload($request->file('cover_image')->getRealPath(), [
                 'folder' => 'books',
             ]);
-            $data['cover_image']           = $uploaded->getSecurePath();
-            $data['cover_image_public_id'] = $uploaded->getPublicId();
+            $data['cover_image']           = $uploaded['secure_url'];
+            $data['cover_image_public_id'] = $uploaded['public_id'];
         }
 
         Book::create($data);
@@ -88,14 +88,14 @@ class BookController extends Controller
         if ($request->hasFile('cover_image')) {
             // Delete old image from Cloudinary
             if ($book->cover_image_public_id) {
-                Cloudinary::destroy($book->cover_image_public_id);
+                Cloudinary::uploadApi()->destroy($book->cover_image_public_id);
             }
             // Upload new image
-            $uploaded = Cloudinary::upload($request->file('cover_image')->getRealPath(), [
+            $uploaded = Cloudinary::uploadApi()->upload($request->file('cover_image')->getRealPath(), [
                 'folder' => 'books',
             ]);
-            $data['cover_image']           = $uploaded->getSecurePath();
-            $data['cover_image_public_id'] = $uploaded->getPublicId();
+            $data['cover_image']           = $uploaded['secure_url'];
+            $data['cover_image_public_id'] = $uploaded['public_id'];
         }
 
         $book->update($data);
@@ -107,7 +107,7 @@ class BookController extends Controller
     {
         // Delete from Cloudinary
         if ($book->cover_image_public_id) {
-            Cloudinary::destroy($book->cover_image_public_id);
+            Cloudinary::uploadApi()->destroy($book->cover_image_public_id);
         }
 
         $book->delete();
