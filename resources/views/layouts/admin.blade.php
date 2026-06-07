@@ -7,6 +7,12 @@
     <title>@yield('title', 'Admin') — BiblioTech</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        (function() {
+            const theme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
@@ -23,6 +29,19 @@
             --muted: #94a3b8;
             --radius: 10px;
         }
+
+        [data-theme="light"] {
+            --bg: #f8fafc;
+            --sidebar: #ffffff;
+            --surface: #ffffff;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --muted: #64748b;
+            --hover-bg: rgba(0,0,0,0.03);
+            --th-bg: rgba(0,0,0,0.02);
+            --input-bg: #f1f5f9;
+        }
+
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; }
 
         /* Sidebar */
@@ -56,9 +75,9 @@
         /* Tables */
         .table-wrap { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
-        th { text-align: left; padding: 0.75rem 1rem; background: rgba(255,255,255,0.03); color: var(--muted); font-weight: 500; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); }
+        th { text-align: left; padding: 0.75rem 1rem; background: var(--th-bg, rgba(255,255,255,0.03)); color: var(--muted); font-weight: 500; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); }
         td { padding: 0.85rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
-        tr:hover td { background: rgba(255,255,255,0.02); }
+        tr:hover td { background: var(--hover-bg, rgba(255,255,255,0.02)); }
 
         /* Badges */
         .badge { display: inline-flex; align-items: center; padding: 0.2rem 0.6rem; border-radius: 999px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -82,7 +101,7 @@
         .form-group { margin-bottom: 1.25rem; }
         label { display: block; font-size: 0.8rem; font-weight: 500; color: var(--muted); margin-bottom: 0.4rem; }
         input[type=text], input[type=email], input[type=password], input[type=number], input[type=file], select, textarea {
-            width: 100%; padding: 0.6rem 0.875rem; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 0.875rem; outline: none; transition: border-color 0.15s ease; font-family: inherit; }
+            width: 100%; padding: 0.6rem 0.875rem; background: var(--input-bg, rgba(255,255,255,0.04)); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 0.875rem; outline: none; transition: border-color 0.15s ease; font-family: inherit; }
         input:focus, select:focus, textarea:focus { border-color: var(--accent); }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
         .form-error { color: var(--danger); font-size: 0.8rem; margin-top: 0.3rem; }
@@ -136,6 +155,10 @@
         </a>
     </nav>
     <div class="sidebar-footer">
+        <button id="theme-toggle" class="btn btn-secondary" style="width:100%; justify-content:center; margin-bottom:0.5rem;">
+            <span class="theme-icon-light">☀️ Light Mode</span>
+            <span class="theme-icon-dark" style="display:none;">🌙 Dark Mode</span>
+        </button>
         <form method="POST" action="{{ route('admin.logout') }}">
             @csrf
             <button type="submit" class="btn btn-secondary" style="width:100%; justify-content:center;">
@@ -160,6 +183,34 @@
         @yield('content')
     </main>
 </div>
+<script>
+const toggleBtn = document.getElementById('theme-toggle');
+if (toggleBtn) {
+    const lightIcon = toggleBtn.querySelector('.theme-icon-light');
+    const darkIcon = toggleBtn.querySelector('.theme-icon-dark');
+    
+    function updateTogglerUI(theme) {
+        if (theme === 'light') {
+            lightIcon.style.display = 'none';
+            darkIcon.style.display = 'inline';
+        } else {
+            lightIcon.style.display = 'inline';
+            darkIcon.style.display = 'none';
+        }
+    }
+    
+    // Initial UI state
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+    updateTogglerUI(currentTheme);
+    
+    toggleBtn.addEventListener('click', () => {
+        const activeTheme = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', activeTheme);
+        localStorage.setItem('theme', activeTheme);
+        updateTogglerUI(activeTheme);
+    });
+}
+</script>
 @stack('scripts')
 </body>
 </html>

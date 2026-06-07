@@ -7,6 +7,12 @@
     <title>@yield('title', 'Library') — BiblioTech</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        (function() {
+            const theme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
@@ -23,25 +29,37 @@
             --muted: #64748b;
             --radius: 12px;
         }
+
+        [data-theme="light"] {
+            --bg: #f3f4f6;
+            --surface: #ffffff;
+            --surface2: #f9fafb;
+            --border: #e5e7eb;
+            --text: #111827;
+            --muted: #6b7280;
+            --nav-bg: rgba(255, 255, 255, 0.85);
+            --header-bg: linear-gradient(135deg, #e0e7ff 0%, #f3f4f6 60%);
+        }
+
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-
-        /* Navbar */
-        .navbar { background: rgba(17,24,39,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; padding: 0 2rem; }
-        .nav-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; height: 60px; gap: 1rem; }
-        .nav-brand { font-size: 1.2rem; font-weight: 700; color: var(--accent); text-decoration: none; letter-spacing: -0.5px; margin-right: auto; }
-        .nav-brand span { color: var(--text); }
-        .nav-link { color: var(--muted); text-decoration: none; font-size: 0.875rem; font-weight: 500; padding: 0.4rem 0.75rem; border-radius: 8px; transition: all 0.15s; }
-        .nav-link:hover, .nav-link.active { background: rgba(99,102,241,0.1); color: var(--accent); }
-        .nav-btn { padding: 0.45rem 1rem; border-radius: 8px; font-size: 0.875rem; font-weight: 500; cursor: pointer; text-decoration: none; transition: all 0.15s; border: none; }
-        .nav-btn-outline { border: 1px solid var(--border); color: var(--text); background: transparent; }
-        .nav-btn-outline:hover { border-color: var(--accent); color: var(--accent); }
-        .nav-btn-solid { background: var(--accent); color: #fff; }
-        .nav-btn-solid:hover { background: #818cf8; }
-
-        /* Hero / Page header */
-        .page-header { background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 60%); padding: 3rem 2rem; text-align: center; }
-        .page-header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
-        .page-header p { color: var(--muted); font-size: 1rem; }
+ 
+         /* Navbar */
+         .navbar { background: var(--nav-bg, rgba(17,24,39,0.85)); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; padding: 0 2rem; }
+         .nav-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; height: 60px; gap: 1rem; }
+         .nav-brand { font-size: 1.2rem; font-weight: 700; color: var(--accent); text-decoration: none; letter-spacing: -0.5px; margin-right: auto; }
+         .nav-brand span { color: var(--text); }
+         .nav-link { color: var(--muted); text-decoration: none; font-size: 0.875rem; font-weight: 500; padding: 0.4rem 0.75rem; border-radius: 8px; transition: all 0.15s; }
+         .nav-link:hover, .nav-link.active { background: rgba(99,102,241,0.1); color: var(--accent); }
+         .nav-btn { padding: 0.45rem 1rem; border-radius: 8px; font-size: 0.875rem; font-weight: 500; cursor: pointer; text-decoration: none; transition: all 0.15s; border: none; }
+         .nav-btn-outline { border: 1px solid var(--border); color: var(--text); background: transparent; }
+         .nav-btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+         .nav-btn-solid { background: var(--accent); color: #fff; }
+         .nav-btn-solid:hover { background: #818cf8; }
+ 
+         /* Hero / Page header */
+         .page-header { background: var(--header-bg, linear-gradient(135deg, #1e1b4b 0%, #0f172a 60%)); padding: 3rem 2rem; text-align: center; }
+         .page-header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+         .page-header p { color: var(--muted); font-size: 1rem; }
 
         /* Main container */
         .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
@@ -133,6 +151,12 @@
     <div class="nav-inner">
         <a href="{{ route('member.books.index') }}" class="nav-brand">Biblio<span>Tech</span></a>
         <a href="{{ route('member.books.index') }}" class="nav-link {{ request()->routeIs('member.books.*') ? 'active' : '' }}">Browse</a>
+        
+        <button id="theme-toggle" class="nav-btn nav-btn-outline" style="padding: 0.4rem 0.6rem; font-size: 1rem; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; margin-left: 0.5rem; margin-right: auto;">
+            <span class="theme-icon-light">☀️</span>
+            <span class="theme-icon-dark" style="display:none;">🌙</span>
+        </button>
+
         @auth('web')
             <a href="{{ route('member.dashboard') }}" class="nav-link {{ request()->routeIs('member.dashboard') ? 'active' : '' }}">My Loans</a>
             <form method="POST" action="{{ route('logout') }}" style="display:inline;">
@@ -158,6 +182,34 @@
     @endif
     @yield('content')
 </main>
+<script>
+const toggleBtn = document.getElementById('theme-toggle');
+if (toggleBtn) {
+    const lightIcon = toggleBtn.querySelector('.theme-icon-light');
+    const darkIcon = toggleBtn.querySelector('.theme-icon-dark');
+    
+    function updateTogglerUI(theme) {
+        if (theme === 'light') {
+            lightIcon.style.display = 'none';
+            darkIcon.style.display = 'inline';
+        } else {
+            lightIcon.style.display = 'inline';
+            darkIcon.style.display = 'none';
+        }
+    }
+    
+    // Initial UI state
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+    updateTogglerUI(currentTheme);
+    
+    toggleBtn.addEventListener('click', () => {
+        const activeTheme = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', activeTheme);
+        localStorage.setItem('theme', activeTheme);
+        updateTogglerUI(activeTheme);
+    });
+}
+</script>
 @stack('scripts')
 </body>
 </html>
