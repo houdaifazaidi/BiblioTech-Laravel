@@ -115,3 +115,4 @@ class BookController extends Controller
         return redirect()->route('admin.books.index')->with('success', 'Book deleted successfully.');
     }
 }
+ 
