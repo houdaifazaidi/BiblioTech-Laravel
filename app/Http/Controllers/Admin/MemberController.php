@@ -66,10 +66,9 @@ class MemberController extends Controller
         $activeLoans = $member->activeLoans()->with('book')->get();
 
         if ($action === 'remove_books') {
-            // Abandon the copy: decrement both total and available copies, then remove the loan record
+            // Abandon the copy: only decrement total_copies (available_copies was already decremented when the loan was created)
             foreach ($activeLoans as $loan) {
                 $loan->book->decrement('total_copies');
-                $loan->book->decrement('available_copies');
                 $loan->delete();
             }
             $member->delete();
@@ -99,7 +98,6 @@ class MemberController extends Controller
         if ($action === 'remove_books') {
             foreach ($activeLoans as $loan) {
                 $loan->book->decrement('total_copies');
-                $loan->book->decrement('available_copies');
                 $loan->delete();
             }
             $member->delete();
