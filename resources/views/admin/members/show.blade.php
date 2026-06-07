@@ -100,7 +100,7 @@
         <div class="modal-actions">
             <button class="btn btn-secondary" onclick="closeModal()">Cancel — Do nothing</button>
             <button class="btn btn-danger" onclick="submitDelete('remove_books')">
-                Delete user and remove their books from loans
+                Delete user and abandon his books
             </button>
             <button class="btn" style="background:rgba(245,158,11,0.12);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);"
                 onclick="submitDelete('return_books')">

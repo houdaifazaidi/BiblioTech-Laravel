@@ -66,28 +66,26 @@ class MemberController extends Controller
         $activeLoans = $member->activeLoans()->with('book')->get();
 
         if ($action === 'remove_books') {
-            // Decrement available_copies, delete loans
+            // Abandon the copy: decrement both total and available copies, then remove the loan record
+            foreach ($activeLoans as $loan) {
+                $loan->book->decrement('total_copies');
+                $loan->book->decrement('available_copies');
+                $loan->delete();
+            }
+            $member->delete();
+            return redirect()->route('admin.members.index')
+                ->with('success', "Member deleted. Borrowed copies written off (total copies reduced).");
+        }
+
+        if ($action === 'return_books') {
+            // Treat books as returned: free up the copies, then delete the loan records and the member
             foreach ($activeLoans as $loan) {
                 $loan->book->increment('available_copies');
                 $loan->delete();
             }
             $member->delete();
             return redirect()->route('admin.members.index')
-                ->with('success', "Member deleted. Books returned to availability.");
-        }
-
-        if ($action === 'return_books') {
-            // Mark as force_returned, increment available_copies
-            foreach ($activeLoans as $loan) {
-                $loan->update([
-                    'status'      => 'force_returned',
-                    'returned_at' => now(),
-                ]);
-                $loan->book->increment('available_copies');
-            }
-            $member->delete();
-            return redirect()->route('admin.members.index')
-                ->with('success', "Member deleted. Loans marked as force-returned.");
+                ->with('success', "Member deleted. Books marked as returned and copies restored.");
         }
 
         return redirect()->route('admin.members.show', $member)
@@ -100,14 +98,15 @@ class MemberController extends Controller
 
         if ($action === 'remove_books') {
             foreach ($activeLoans as $loan) {
-                $loan->book->increment('available_copies');
+                $loan->book->decrement('total_copies');
+                $loan->book->decrement('available_copies');
                 $loan->delete();
             }
             $member->delete();
         } elseif ($action === 'return_books') {
             foreach ($activeLoans as $loan) {
-                $loan->update(['status' => 'force_returned', 'returned_at' => now()]);
                 $loan->book->increment('available_copies');
+                $loan->delete();
             }
             $member->delete();
         }
