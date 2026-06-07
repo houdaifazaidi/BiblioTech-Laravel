@@ -18,6 +18,10 @@ Route::get('/', function () {
     return redirect()->route('member.books.index');
 });
 
+Route::get('/about', function () {
+    return view('about');
+})->name('about');
+
 // Member Auth
 Route::middleware('guest')->group(function () {
     Route::get('/login',    [MemberAuthController::class, 'showLogin'])->name('login');

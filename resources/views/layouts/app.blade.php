@@ -151,6 +151,7 @@
     <div class="nav-inner">
         <a href="{{ route('member.books.index') }}" class="nav-brand">Biblio<span>Tech</span></a>
         <a href="{{ route('member.books.index') }}" class="nav-link {{ request()->routeIs('member.books.*') ? 'active' : '' }}">Browse</a>
+        <a href="{{ route('about') }}" class="nav-link {{ request()->routeIs('about') ? 'active' : '' }}">About</a>
         
         <button id="theme-toggle" class="nav-btn nav-btn-outline" style="padding: 0.4rem 0.6rem; font-size: 1rem; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; margin-left: 0.5rem; margin-right: auto;">
             <span class="theme-icon-light">☀️</span>
