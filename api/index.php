@@ -2,6 +2,10 @@
 
 // Suppress PHP 8.4/8.5 deprecation warnings that pollute the output
 error_reporting(E_ALL & ~E_DEPRECATED);
+
+// Fix Vercel routing: Prevent Symfony/Laravel from stripping "/api" from the request URI
+$_SERVER['SCRIPT_NAME'] = '/index.php';
+$_SERVER['PHP_SELF'] = '/index.php';
 // Configure Laravel to use /tmp for caching in Vercel's read-only filesystem
 $_ENV['APP_CONFIG_CACHE'] = '/tmp/config.php';
 $_ENV['APP_EVENTS_CACHE'] = '/tmp/events.php';
