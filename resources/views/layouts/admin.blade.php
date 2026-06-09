@@ -506,7 +506,7 @@
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
         <div class="sidebar-brand">
-            <div class="sidebar-brand-icon">📚</div>
+            <div class="sidebar-brand-icon">🏛️</div>
             Biblio<span>Tech</span>
         </div>
         <div class="sidebar-badge">🔑 Admin Panel</div>

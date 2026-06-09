@@ -278,7 +278,7 @@
 <section class="home-hero">
     <div class="hero-orb-left"></div>
     <div class="home-hero-inner">
-        <span class="home-hero-badge">📚 Your Digital Library Hub</span>
+        <span class="home-hero-badge">🏛️ Your Digital Library Hub</span>
         <h1 class="home-hero-title">Welcome to <span>BiblioTech</span></h1>
         <p class="home-hero-subtitle">Simplify your reading life. Instantly search hundreds of book titles, track your active borrows, and manage your entire reading history with absolute ease.</p>
         <div class="home-hero-ctas">

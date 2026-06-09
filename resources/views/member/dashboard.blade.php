@@ -45,7 +45,7 @@
     {{-- Quick Stats --}}
     <div class="dashboard-stats">
         <div class="dash-stat-card" style="--stat-color: #6366f1;">
-            <div class="dash-stat-icon">📚</div>
+            <div class="dash-stat-icon">🏛️</div>
             <div class="dash-stat-value">{{ $activeLoans->count() }}</div>
             <div class="dash-stat-label">Books Borrowed</div>
         </div>
@@ -72,7 +72,7 @@
 
         @if($activeLoans->isEmpty())
             <div style="text-align:center;padding:3rem 2rem;color:var(--muted);">
-                <div style="font-size:3rem;margin-bottom:0.75rem;">📚</div>
+                <div style="font-size:3rem;margin-bottom:0.75rem;">🏛️</div>
                 <div style="font-size:1rem;font-weight:600;color:var(--text);margin-bottom:0.4rem;">No books borrowed yet</div>
                 <div style="font-size:0.875rem;margin-bottom:1.5rem;">Start exploring the catalog to borrow your first book.</div>
                 <a href="{{ route('member.books.index') }}" class="btn btn-primary btn-sm">Browse Library</a>
@@ -84,7 +84,7 @@
                     @if($loan->book->cover_image)
                         <img src="{{ $loan->book->cover_image }}" alt="{{ $loan->book->title }}" class="loan-cover">
                     @else
-                        <div class="loan-cover" style="display:flex;align-items:center;justify-content:center;font-size:1.75rem;">📚</div>
+                        <div class="loan-cover" style="display:flex;align-items:center;justify-content:center;font-size:1.75rem;">🏛️</div>
                     @endif
                     <div class="loan-details">
                         <div class="loan-title">{{ $loan->book->title }}</div>
@@ -120,7 +120,7 @@
                 @if($loan->book->cover_image)
                     <img src="{{ $loan->book->cover_image }}" alt="{{ $loan->book->title }}" class="loan-cover">
                 @else
-                    <div class="loan-cover" style="display:flex;align-items:center;justify-content:center;font-size:1.75rem;">📚</div>
+                    <div class="loan-cover" style="display:flex;align-items:center;justify-content:center;font-size:1.75rem;">🏛️</div>
                 @endif
                 <div class="loan-details">
                     <div class="loan-title">{{ $loan->book->title }}</div>

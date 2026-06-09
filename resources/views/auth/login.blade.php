@@ -5,7 +5,7 @@
 <div class="auth-wrapper">
     <div class="auth-card">
         <div class="auth-logo">
-            <div class="auth-logo-icon">📚</div>
+            <div class="auth-logo-icon">🏛️</div>
             <div class="auth-logo-text">Biblio<span>Tech</span></div>
         </div>
         <div class="auth-title">Welcome back</div>

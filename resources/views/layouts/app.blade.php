@@ -706,7 +706,7 @@
 <nav class="navbar">
     <div class="nav-inner">
         <a href="{{ route('member.books.index') }}" class="nav-brand">
-            <div class="nav-brand-icon">📚</div>
+            <div class="nav-brand-icon">🏛️</div>
             Biblio<span>Tech</span>
         </a>
         <a href="{{ route('member.books.index') }}" class="nav-link {{ request()->routeIs('member.books.*') ? 'active' : '' }}">Browse</a>
@@ -750,7 +750,7 @@
     <div class="footer-inner">
         <div>
             <a href="{{ route('member.books.index') }}" class="footer-brand">
-                📚 Biblio<span>Tech</span>
+                🏛️ Biblio<span>Tech</span>
             </a>
             <div class="footer-tagline">Your smart digital library</div>
         </div>

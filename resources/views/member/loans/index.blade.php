@@ -210,7 +210,7 @@
                     @if($loan->book->cover_image)
                         <img src="{{ $loan->book->cover_image }}" alt="{{ $loan->book->title }}">
                     @else
-                        <div class="rbc-cover-placeholder">📚</div>
+                        <div class="rbc-cover-placeholder">🏛️</div>
                     @endif
 
                     <div class="rbc-status-dot {{ $isOverdue ? 'dot-force' : 'dot-returned' }}" style="{{ !$isOverdue ? 'background: rgba(99, 102, 241, 0.88); box-shadow: 0 2px 8px rgba(99, 102, 241, 0.55);' : '' }}">
@@ -265,7 +265,7 @@
                     @if($loan->book->cover_image)
                         <img src="{{ $loan->book->cover_image }}" alt="{{ $loan->book->title }}">
                     @else
-                        <div class="rbc-cover-placeholder">📚</div>
+                        <div class="rbc-cover-placeholder">🏛️</div>
                     @endif
 
                     <div class="rbc-status-dot {{ $isForce ? 'dot-force' : 'dot-returned' }}">

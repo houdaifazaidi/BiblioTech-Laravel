@@ -86,7 +86,7 @@
                 @if($book->cover_image)
                     <img src="{{ $book->cover_image }}" alt="{{ $book->title }}">
                 @else
-                    <div class="book-show-cover-placeholder">📚</div>
+                    <div class="book-show-cover-placeholder">🏛️</div>
                 @endif
             </div>
 

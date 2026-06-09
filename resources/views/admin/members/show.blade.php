@@ -67,7 +67,7 @@
 
         @if($activeLoans->isEmpty())
             <div style="text-align:center;padding:2.5rem 1rem;color:var(--muted);">
-                <div style="font-size:2rem;margin-bottom:0.5rem;">📚</div>
+                <div style="font-size:2rem;margin-bottom:0.5rem;">🏛️</div>
                 <div style="font-weight:600;color:var(--text);margin-bottom:0.2rem;">No active loans</div>
                 <div style="font-size:0.85rem;">This member has no books checked out.</div>
             </div>

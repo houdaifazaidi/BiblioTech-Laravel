@@ -201,7 +201,7 @@
 <body>
 <div class="login-card">
     <div class="card-logo">
-        <div class="card-logo-icon">📚</div>
+        <div class="card-logo-icon">🏛️</div>
         <div class="card-logo-text">Biblio<span>Tech</span></div>
     </div>
 

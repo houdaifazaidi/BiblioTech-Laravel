@@ -31,7 +31,7 @@
 
     @if($books->isEmpty())
         <div style="text-align:center;padding:5rem 0;color:var(--muted);">
-            <div style="font-size:3.5rem;margin-bottom:1rem;">📚</div>
+            <div style="font-size:3.5rem;margin-bottom:1rem;">🏛️</div>
             <h2 style="color:var(--text);font-size:1.4rem;margin-bottom:0.5rem;">No books found</h2>
             <p style="margin-bottom:1.5rem;">Try adjusting your search or filters.</p>
             <a href="{{ route('member.books.index') }}" class="btn btn-secondary btn-sm">Clear Filters</a>
@@ -45,7 +45,7 @@
                         @if($book->cover_image)
                             <img src="{{ $book->cover_image }}" alt="{{ $book->title }}" class="book-cover">
                         @else
-                            <div class="book-cover" style="display:flex;align-items:center;justify-content:center;font-size:2.25rem;">📚</div>
+                            <div class="book-cover" style="display:flex;align-items:center;justify-content:center;font-size:2.25rem;">🏛️</div>
                         @endif
 
                         {{-- Availability overlay badge --}}

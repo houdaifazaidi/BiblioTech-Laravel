@@ -47,7 +47,7 @@
                             <img src="{{ $book->cover_image }}" alt="{{ $book->title }}"
                                  style="width:38px;height:54px;object-fit:cover;border-radius:5px;display:block;box-shadow:0 2px 8px rgba(0,0,0,0.2);">
                         @else
-                            <div style="width:38px;height:54px;background:var(--surface2);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:1rem;border:1px solid var(--border);">📚</div>
+                            <div style="width:38px;height:54px;background:var(--surface2);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:1rem;border:1px solid var(--border);">🏛️</div>
                         @endif
                     </td>
                     <td>
@@ -84,7 +84,7 @@
                 @empty
                 <tr>
                     <td colspan="8" style="text-align:center;color:var(--muted);padding:3rem;">
-                        <div style="font-size:2rem;margin-bottom:0.5rem;">📚</div>
+                        <div style="font-size:2rem;margin-bottom:0.5rem;">🏛️</div>
                         No books found.
                     </td>
                 </tr>

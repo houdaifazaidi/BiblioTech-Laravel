@@ -26,7 +26,7 @@ class UpdateOverdueLoans extends Command
 
         foreach ($overdueLoans as $loan) {
             $graceDays   = $rule ? $rule->grace_days : 0;
-            $daysOverdue = $today->diffInDays($loan->due_date) - $graceDays;
+            $daysOverdue = abs($today->diffInDays($loan->due_date)) - $graceDays;
 
             $penalty = 0.00;
             if ($rule && $daysOverdue > 0) {
@@ -48,7 +48,7 @@ class UpdateOverdueLoans extends Command
 
         foreach ($existingOverdue as $loan) {
             if ($rule) {
-                $daysOverdue = max(0, $today->diffInDays($loan->due_date) - $rule->grace_days);
+                $daysOverdue = max(0, abs($today->diffInDays($loan->due_date)) - $rule->grace_days);
                 $penalty     = min($daysOverdue * $rule->fine_per_day, $rule->max_fine ?? PHP_INT_MAX);
                 $loan->update(['penalty_amount' => $penalty]);
             }

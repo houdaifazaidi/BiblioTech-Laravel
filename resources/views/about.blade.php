@@ -300,7 +300,7 @@
 {{-- Hero --}}
 <div class="about-hero">
     <div class="about-hero-inner">
-        <div class="about-hero-badge">📚 About BiblioTech</div>
+        <div class="about-hero-badge">🏛️ About BiblioTech</div>
         <h1 class="about-hero-title">Your Smart Digital Library</h1>
         <p class="about-hero-subtitle">BiblioTech is a modern library management system built to make borrowing, returning, and discovering books simple, transparent, and enjoyable.</p>
         <div class="about-hero-cta">
@@ -459,7 +459,7 @@
                 <p>Overdue books are clearly flagged in your dashboard with the exact number of late days and current penalty amount.</p>
             </div>
             <div class="about-feature">
-                <div class="about-feature-icon">📚</div>
+                <div class="about-feature-icon">🏛️</div>
                 <h3>Large Catalog</h3>
                 <p>Explore a growing catalog spanning Fiction, Science, History, Philosophy, Technology, Mystery, and more.</p>
             </div>

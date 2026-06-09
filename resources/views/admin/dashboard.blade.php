@@ -5,7 +5,7 @@
 @section('content')
 <div class="stats-grid">
     <div class="stat-card" style="--stat-color:#6366f1; --stat-glow: rgba(99,102,241,0.12);">
-        <div class="stat-icon">📚</div>
+        <div class="stat-icon">🏛️</div>
         <div class="stat-body">
             <div class="stat-value">{{ $stats['total_books'] }}</div>
             <div class="stat-label">Total Books</div>
