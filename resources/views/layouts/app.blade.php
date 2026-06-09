@@ -611,13 +611,13 @@
             box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
             transform: translateY(-1px);
         }
-        .pagination .active span {
+        .pagination .active {
             background: linear-gradient(135deg, var(--accent), var(--accent2));
             border-color: var(--accent);
             color: #fff;
             box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
         }
-        .pagination .disabled span { opacity: 0.35; background: transparent; cursor: default; }
+        .pagination .disabled { opacity: 0.35; background: transparent; cursor: default; }
 
         /* ── Footer ── */
         .site-footer {
