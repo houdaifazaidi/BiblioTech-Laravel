@@ -90,7 +90,7 @@
                         </td>
                         <td><span class="badge badge-{{ $loan->status }}">{{ ucfirst($loan->status) }}</span></td>
                         <td style="font-weight:600; color:{{ $loan->penalty_amount > 0 ? 'var(--danger)' : 'var(--muted)' }};">
-                            {{ $loan->penalty_amount > 0 ? number_format($loan->penalty_amount, 2).' MAD' : '—' }}
+                            {{ number_format($loan->penalty_amount ?? 0, 2) }} MAD
                         </td>
                     </tr>
                     @endforeach
