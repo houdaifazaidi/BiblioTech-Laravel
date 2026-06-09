@@ -76,22 +76,27 @@
     @if($history->isNotEmpty())
     <div class="card">
         <div class="card-title">Recently Returned</div>
-        <div class="table-wrap">
-            <table>
-                <thead><tr><th>Book</th><th>Returned</th><th>Status</th></tr></thead>
-                <tbody>
-                    @foreach($history as $loan)
-                    <tr>
-                        <td>
-                            <div style="font-weight:500;font-size:0.875rem;">{{ $loan->book->title }}</div>
-                            <div style="font-size:0.75rem;color:var(--muted);">{{ $loan->book->author }}</div>
-                        </td>
-                        <td style="font-size:0.85rem;color:var(--muted);">{{ $loan->returned_at?->format('d M Y') ?? '—' }}</td>
-                        <td><span class="badge badge-returned">{{ ucfirst(str_replace('_', ' ', $loan->status)) }}</span></td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+        <div class="loans-list">
+            @foreach($history as $loan)
+            <div class="loan-card">
+                @if($loan->book->cover_image)
+                    <img src="{{ $loan->book->cover_image }}" alt="{{ $loan->book->title }}" class="loan-cover">
+                @else
+                    <div class="loan-cover" style="display:flex;align-items:center;justify-content:center;font-size:1.75rem;border-radius:6px;">📚</div>
+                @endif
+                <div class="loan-details">
+                    <div class="loan-title">{{ $loan->book->title }}</div>
+                    <div class="loan-meta">by {{ $loan->book->author }}</div>
+                    <div class="loan-meta" style="margin-top:0.5rem; display:flex; flex-wrap:wrap; gap:0.5rem 1rem; font-size:0.8rem;">
+                        <span>📅 Borrowed: <strong style="color:var(--text)">{{ $loan->borrowed_at->format('d M Y') }}</strong></span>
+                        <span>✅ Returned: <strong style="color:var(--success)">{{ $loan->returned_at?->format('d M Y') ?? '—' }}</strong></span>
+                    </div>
+                </div>
+                <div class="loan-actions">
+                    <span class="badge badge-returned">{{ ucfirst(str_replace('_', ' ', $loan->status)) }}</span>
+                </div>
+            </div>
+            @endforeach
         </div>
     </div>
     @endif
