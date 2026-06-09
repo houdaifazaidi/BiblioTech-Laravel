@@ -4,13 +4,18 @@
 
 @section('content')
 <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem;">
-    <div style="font-size:0.9rem; color:var(--muted);">{{ $members->total() }} members registered</div>
+    <div style="font-size:0.875rem; color:var(--muted);">
+        <strong style="color:var(--text);">{{ $members->total() }}</strong> members registered
+    </div>
 </div>
 
 <div class="card">
     <form method="GET" action="{{ route('admin.members.index') }}" class="search-bar">
         <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name or email…">
-        <button type="submit" class="btn btn-primary">Search</button>
+        <button type="submit" class="btn btn-primary">
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" stroke-width="2" d="M21 21l-4.35-4.35"/></svg>
+            Search
+        </button>
         @if(request('search'))
             <a href="{{ route('admin.members.index') }}" class="btn btn-secondary">Clear</a>
         @endif
@@ -31,7 +36,14 @@
             <tbody>
                 @forelse($members as $member)
                 <tr>
-                    <td style="font-weight:500;">{{ $member->name }}</td>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:0.65rem;">
+                            <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.75rem;font-weight:700;flex-shrink:0;">
+                                {{ mb_strtoupper(mb_substr($member->name, 0, 1)) }}
+                            </div>
+                            <span style="font-weight:600;">{{ $member->name }}</span>
+                        </div>
+                    </td>
                     <td style="color:var(--muted);font-size:0.85rem;">{{ $member->email }}</td>
                     <td>
                         @if($member->is_active)
@@ -62,12 +74,17 @@
                     </td>
                 </tr>
                 @empty
-                <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:2rem;">No members found.</td></tr>
+                <tr>
+                    <td colspan="6" style="text-align:center;color:var(--muted);padding:3rem;">
+                        <div style="font-size:2rem;margin-bottom:0.5rem;">👥</div>
+                        No members found.
+                    </td>
+                </tr>
                 @endforelse
             </tbody>
         </table>
     </div>
-    <div class="pagination">{{ $members->links() }}</div>
+    {{ $members->links() }}
 </div>
 
 {{-- Delete Modal --}}
@@ -80,7 +97,7 @@
             <button class="btn btn-danger" id="btn-remove-books" onclick="submitDelete('remove_books')">
                 Delete user and remove their books from loans
             </button>
-            <button class="btn" style="background:rgba(245,158,11,0.12);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);"
+            <button class="btn" style="background:var(--warning-glow);color:var(--warning);border:1px solid rgba(245,158,11,0.3);"
                 id="btn-return-books" onclick="submitDelete('return_books')">
                 Delete user and mark books as returned
             </button>
@@ -96,17 +113,14 @@ let currentHasLoans = false;
 function handleDelete(memberId, activeLoans, memberName) {
     currentMemberId = memberId;
     currentHasLoans = activeLoans > 0;
-
     if (!currentHasLoans) {
         if (confirm(`Delete "${memberName}"? This cannot be undone.`)) {
             document.getElementById('del-form-' + memberId).submit();
         }
         return;
     }
-
     document.getElementById('modal-title').textContent = `Delete "${memberName}"`;
-    document.getElementById('modal-body').textContent =
-        `This member has ${activeLoans} active loan(s). Choose how to handle them:`;
+    document.getElementById('modal-body').textContent = `This member has ${activeLoans} active loan(s). Choose how to handle them:`;
     document.getElementById('deleteModal').classList.add('open');
 }
 
@@ -120,10 +134,7 @@ function submitDelete(action) {
     const form = document.createElement('form');
     form.method = 'POST';
     form.action = `/admin/members/${currentMemberId}/force-delete`;
-    form.innerHTML = `
-        @csrf
-        <input type="hidden" name="action" value="${action}">
-    `;
+    form.innerHTML = `@csrf<input type="hidden" name="action" value="${action}">`;
     document.body.appendChild(form);
     form.submit();
 }
