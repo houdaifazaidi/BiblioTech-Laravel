@@ -1,10 +1,178 @@
 @extends('layouts.app')
 @section('title', 'My Loans')
 
+@push('styles')
+<style>
+    /* ── Section tabs ──────────────────────────────── */
+    .loans-section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.25rem;
+    }
+    .loans-section-header h2 {
+        font-size: 1.2rem;
+        font-weight: 700;
+    }
+    .loans-count-chip {
+        font-size: 0.75rem;
+        color: var(--muted);
+        background: var(--surface2);
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+    }
+
+    /* ── Returned books grid ───────────────────────── */
+    .returned-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 1.1rem;
+    }
+
+    .returned-book-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+    }
+    .returned-book-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 14px 36px rgba(0,0,0,0.45);
+        border-color: rgba(99,102,241,0.4);
+    }
+
+    /* Cover */
+    .rbc-cover {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 2 / 3;
+        background: var(--surface2);
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+    .rbc-cover img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.3s ease;
+    }
+    .returned-book-card:hover .rbc-cover img {
+        transform: scale(1.05);
+    }
+    .rbc-cover-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.25rem;
+        color: var(--muted);
+    }
+
+    /* Badge on cover */
+    .rbc-status-dot {
+        position: absolute;
+        top: 7px;
+        right: 7px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        font-weight: 700;
+        backdrop-filter: blur(6px);
+    }
+    .rbc-status-dot.dot-returned {
+        background: rgba(16,185,129,0.88);
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(16,185,129,0.55);
+    }
+    .rbc-status-dot.dot-force {
+        background: rgba(245,158,11,0.88);
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(245,158,11,0.55);
+    }
+
+    /* Returned-on ribbon at bottom of cover */
+    .rbc-returned-on {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.78) 0%, transparent 100%);
+        padding: 0.5rem 0.5rem 0.4rem;
+        font-size: 0.62rem;
+        color: #a7f3d0;
+        font-weight: 500;
+        line-height: 1.3;
+    }
+
+    /* Info section */
+    .rbc-info {
+        padding: 0.75rem 0.8rem 0.85rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+        flex: 1;
+    }
+    .rbc-title {
+        font-weight: 600;
+        font-size: 0.8rem;
+        line-height: 1.3;
+        color: var(--text);
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    .rbc-author {
+        font-size: 0.7rem;
+        color: var(--muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .rbc-penalty {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        margin-top: 0.3rem;
+        font-size: 0.67rem;
+        color: var(--warning);
+        font-weight: 600;
+    }
+    .rbc-penalty-paid {
+        font-size: 0.6rem;
+        background: rgba(16,185,129,0.15);
+        color: var(--success);
+        border: 1px solid rgba(16,185,129,0.3);
+        border-radius: 999px;
+        padding: 0.05rem 0.4rem;
+        font-weight: 600;
+    }
+    .rbc-badge-wrap {
+        margin-top: auto;
+        padding-top: 0.45rem;
+    }
+
+    @media (max-width: 480px) {
+        .returned-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+    }
+</style>
+@endpush
+
 @section('content')
 <div class="page-header">
-    <h1>My Loans History</h1>
-    <p>A complete record of your library activity</p>
+    <h1>My Loans</h1>
+    <p>Track your active borrows and your reading history</p>
 </div>
 
 <div class="container">
@@ -13,84 +181,113 @@
         <a href="{{ route('member.books.index') }}" class="btn btn-primary btn-sm">Borrow More Books</a>
     </div>
 
-    <div class="card">
-        @if($loans->isEmpty())
-            <div style="text-align:center;padding:4rem 0;color:var(--muted);">
-                <div style="font-size:3rem;margin-bottom:1rem;">📋</div>
-                <h2>No loan history found</h2>
-                <p>You haven't borrowed any books yet.</p>
+    @php
+        $activeLoans   = $loans->filter(fn($l) => in_array($l->status, ['active', 'overdue']));
+        $returnedLoans = $loans->filter(fn($l) => in_array($l->status, ['returned', 'force_returned']));
+    @endphp
+
+    {{-- ── Active / Overdue Loans ───────────────────── --}}
+    <div class="loans-section-header">
+        <h2>Currently Borrowed</h2>
+        @if($activeLoans->count())
+            <span class="loans-count-chip">{{ $activeLoans->count() }} active</span>
+        @endif
+    </div>
+
+    <div class="card" style="margin-bottom:2rem;">
+        @if($activeLoans->isEmpty())
+            <div style="text-align:center;padding:3rem 0;color:var(--muted);">
+                <div style="font-size:2.5rem;margin-bottom:1rem;">📚</div>
+                <p>You have no active loans right now.</p>
             </div>
         @else
-            <div class="table-wrap">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Book</th>
-                            <th>Borrowed On</th>
-                            <th>Due Date</th>
-                            <th>Returned On</th>
-                            <th>Status</th>
-                            <th>Penalty</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($loans as $loan)
-                        <tr>
-                            <td>
-                                <div style="display:flex;align-items:center;gap:0.75rem;">
-                                    @if($loan->book->cover_image)
-                                        <img src="{{ $loan->book->cover_image }}" alt="" style="width:36px;height:54px;object-fit:cover;border-radius:4px;">
-                                    @else
-                                        <div style="width:36px;height:54px;background:var(--surface2);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:1rem;">📚</div>
-                                    @endif
-                                    <div>
-                                        <div style="font-weight:600;font-size:0.875rem;">{{ Str::limit($loan->book->title, 35) }}</div>
-                                        <div style="font-size:0.75rem;color:var(--muted);">{{ $loan->book->author }}</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>{{ $loan->borrowed_at->format('d M Y') }}</td>
-                            <td>
-                                {{ $loan->due_date->format('d M Y') }}
-                                @if($loan->days_overdue > 0 && in_array($loan->status, ['active', 'overdue']))
-                                    <div style="font-size:0.7rem;color:var(--danger);font-weight:600;">{{ $loan->days_overdue }}d late</div>
-                                @endif
-                            </td>
-                            <td style="color:var(--muted);">{{ $loan->returned_at?->format('d M Y') ?? '—' }}</td>
-                            <td>
-                                @if(in_array($loan->status, ['active', 'overdue']))
-                                    <span class="badge badge-{{ $loan->status }}">{{ ucfirst($loan->status) }}</span>
-                                @else
-                                    <span class="badge badge-returned">{{ ucfirst(str_replace('_', ' ', $loan->status)) }}</span>
-                                @endif
-                            </td>
-                            <td>
-                                @if($loan->penalty_amount > 0)
-                                    <span style="color:var(--danger);font-weight:600;">{{ number_format($loan->penalty_amount, 2) }} MAD</span>
-                                @else
-                                    <span style="color:var(--muted);">—</span>
-                                @endif
-                            </td>
-                            <td>
-                                @if(in_array($loan->status, ['active', 'overdue']))
-                                    <form method="POST" action="{{ route('member.loans.return', $loan) }}">
-                                        @csrf @method('PATCH')
-                                        <button type="submit" class="btn btn-success btn-sm">Return</button>
-                                    </form>
-                                @else
-                                    <span style="color:var(--muted);font-size:0.8rem;">Returned</span>
-                                @endif
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-            <div class="pagination">
-                {{ $loans->links() }}
+            <div class="loans-list">
+                @foreach($activeLoans as $loan)
+                <div class="loan-card">
+                    @if($loan->book->cover_image)
+                        <img src="{{ $loan->book->cover_image }}" alt="" class="loan-cover">
+                    @else
+                        <div class="loan-cover" style="display:flex;align-items:center;justify-content:center;font-size:1.5rem;">📚</div>
+                    @endif
+
+                    <div class="loan-details">
+                        <div class="loan-title">{{ $loan->book->title }}</div>
+                        <div class="loan-meta">{{ $loan->book->author }}</div>
+                        <div class="loan-meta" style="margin-top:0.4rem;">
+                            Borrowed: {{ $loan->borrowed_at->format('d M Y') }} &nbsp;•&nbsp; Due: {{ $loan->due_date->format('d M Y') }}
+                        </div>
+                        @if($loan->penalty_amount > 0)
+                            <div class="loan-penalty">⚠ Penalty: {{ number_format($loan->penalty_amount, 2) }} MAD ({{ $loan->days_overdue }}d overdue)</div>
+                        @endif
+                    </div>
+
+                    <div class="loan-actions">
+                        <span class="badge badge-{{ $loan->status }}">{{ ucfirst($loan->status) }}</span>
+                        @if(in_array($loan->status, ['active','overdue']))
+                            <form method="POST" action="{{ route('member.loans.return', $loan) }}">
+                                @csrf @method('PATCH')
+                                <button type="submit" class="btn btn-success btn-sm">Return Book</button>
+                            </form>
+                        @endif
+                    </div>
+                </div>
+                @endforeach
             </div>
         @endif
     </div>
+
+    {{-- ── Returned / History ───────────────────────── --}}
+    @if($returnedLoans->count())
+        <div class="loans-section-header">
+            <h2>Recently Returned</h2>
+            <span class="loans-count-chip">{{ $returnedLoans->count() }} book{{ $returnedLoans->count() !== 1 ? 's' : '' }}</span>
+        </div>
+
+        <div class="returned-grid" style="margin-bottom:2rem;">
+            @foreach($returnedLoans as $loan)
+            @php $isForce = $loan->status === 'force_returned'; @endphp
+            <div class="returned-book-card">
+                <div class="rbc-cover">
+                    @if($loan->book->cover_image)
+                        <img src="{{ $loan->book->cover_image }}" alt="{{ $loan->book->title }}">
+                    @else
+                        <div class="rbc-cover-placeholder">📚</div>
+                    @endif
+
+                    <div class="rbc-status-dot {{ $isForce ? 'dot-force' : 'dot-returned' }}">
+                        {{ $isForce ? '⚡' : '✓' }}
+                    </div>
+
+                    <div class="rbc-returned-on">
+                        ✅ {{ $loan->returned_at?->format('d M Y') ?? '—' }}
+                    </div>
+                </div>
+
+                <div class="rbc-info">
+                    <div class="rbc-title" title="{{ $loan->book->title }}">{{ $loan->book->title }}</div>
+                    <div class="rbc-author">{{ $loan->book->author }}</div>
+
+                    @if($loan->penalty_amount > 0)
+                        <div class="rbc-penalty">
+                            ⚠ {{ number_format($loan->penalty_amount, 2) }} MAD
+                            @if($loan->penalty_paid)
+                                <span class="rbc-penalty-paid">Paid</span>
+                            @endif
+                        </div>
+                    @endif
+
+                    <div class="rbc-badge-wrap">
+                        <span class="badge badge-returned">{{ ucfirst(str_replace('_', ' ', $loan->status)) }}</span>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+
+        {{-- Pagination only for returned section --}}
+        <div class="pagination">
+            {{ $loans->links() }}
+        </div>
+    @endif
 </div>
 @endsection
