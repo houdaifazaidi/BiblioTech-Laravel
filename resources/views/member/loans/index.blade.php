@@ -202,36 +202,48 @@
             <a href="{{ route('member.books.index') }}" class="btn btn-primary btn-sm">Explore Books</a>
         </div>
     @else
-        <div class="loans-list" style="margin-bottom:3rem;">
+        <div class="returned-grid" style="margin-bottom:3rem;">
             @foreach($activeLoans as $loan)
             @php $isOverdue = $loan->status === 'overdue'; @endphp
-            <div class="loan-card" style="{{ $isOverdue ? 'border-left: 4px solid var(--danger);' : 'border-left: 4px solid var(--accent);' }}">
-                @if($loan->book->cover_image)
-                    <img src="{{ $loan->book->cover_image }}" alt="" class="loan-cover">
-                @else
-                    <div class="loan-cover" style="display:flex;align-items:center;justify-content:center;font-size:1.75rem;">📚</div>
-                @endif
-
-                <div class="loan-details">
-                    <div class="loan-title">{{ $loan->book->title }}</div>
-                    <div class="loan-meta">by {{ $loan->book->author }}</div>
-                    <div class="loan-meta" style="margin-top:0.6rem; display:flex; flex-wrap:wrap; gap:0.5rem 1rem; font-size:0.8rem;">
-                        <span>📅 Borrowed: <strong style="color:var(--text)">{{ $loan->borrowed_at->format('d M Y') }}</strong></span>
-                        <span>⏳ Due: <strong style="{{ $isOverdue ? 'color:var(--danger)' : 'color:var(--text)' }}">{{ $loan->due_date->format('d M Y') }}</strong></span>
-                    </div>
-                    @if($loan->penalty_amount > 0)
-                        <div class="loan-penalty">
-                            ⚠ Penalty: {{ number_format($loan->penalty_amount, 2) }} MAD ({{ $loan->days_overdue }} days overdue)
-                        </div>
+            <div class="returned-book-card" style="{{ $isOverdue ? 'border-color: rgba(239, 68, 68, 0.4);' : '' }}">
+                <div class="rbc-cover">
+                    @if($loan->book->cover_image)
+                        <img src="{{ $loan->book->cover_image }}" alt="{{ $loan->book->title }}">
+                    @else
+                        <div class="rbc-cover-placeholder">📚</div>
                     @endif
+
+                    <div class="rbc-status-dot {{ $isOverdue ? 'dot-force' : 'dot-returned' }}" style="{{ !$isOverdue ? 'background: rgba(99, 102, 241, 0.88); box-shadow: 0 2px 8px rgba(99, 102, 241, 0.55);' : '' }}">
+                        {{ $isOverdue ? '⚠' : '📖' }}
+                    </div>
+
+                    <div class="rbc-returned-on" style="{{ $isOverdue ? 'background: linear-gradient(to top, rgba(239,68,68,0.85) 0%, transparent 100%); color: #fca5a5;' : 'background: linear-gradient(to top, rgba(99,102,241,0.85) 0%, transparent 100%); color: #c7d2fe;' }}">
+                        ⏳ Due: {{ $loan->due_date->format('d M Y') }}
+                    </div>
                 </div>
 
-                <div class="loan-actions">
-                    <span class="badge badge-{{ $loan->status }}" style="margin-bottom: 0.25rem;">{{ ucfirst($loan->status) }}</span>
-                    <form method="POST" action="{{ route('member.loans.return', $loan) }}">
-                        @csrf @method('PATCH')
-                        <button type="submit" class="btn btn-success btn-sm">Return Book</button>
-                    </form>
+                <div class="rbc-info">
+                    <div class="rbc-title" title="{{ $loan->book->title }}">{{ $loan->book->title }}</div>
+                    <div class="rbc-author">by {{ $loan->book->author }}</div>
+
+                    <div style="font-size: 0.68rem; color: var(--muted); margin-top: 0.25rem;">
+                        📅 {{ $loan->borrowed_at->format('d M Y') }}
+                    </div>
+
+                    @if($loan->penalty_amount > 0)
+                        <div class="rbc-penalty">
+                            ⚠ {{ number_format($loan->penalty_amount, 2) }} MAD
+                            <span class="rbc-penalty-paid" style="background: rgba(239, 68, 68, 0.15); color: var(--danger); border-color: rgba(239, 68, 68, 0.3);">{{ $loan->days_overdue }}d late</span>
+                        </div>
+                    @endif
+
+                    <div class="rbc-badge-wrap" style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: auto;">
+                        <span class="badge badge-{{ $loan->status }}" style="text-align: center; justify-content: center; width: 100%;">{{ ucfirst($loan->status) }}</span>
+                        <form method="POST" action="{{ route('member.loans.return', $loan) }}" style="width: 100%;">
+                            @csrf @method('PATCH')
+                            <button type="submit" class="btn btn-success btn-sm" style="width: 100%; font-size: 0.75rem; padding: 0.35rem 0.5rem;">Return</button>
+                        </form>
+                    </div>
                 </div>
             </div>
             @endforeach
