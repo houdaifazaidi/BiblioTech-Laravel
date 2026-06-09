@@ -187,54 +187,56 @@
     @endphp
 
     {{-- ── Active / Overdue Loans ───────────────────── --}}
-    <div class="loans-section-header">
+    <div class="loans-section-header" style="margin-top: 1.5rem;">
         <h2>Currently Borrowed</h2>
         @if($activeLoans->count())
             <span class="loans-count-chip">{{ $activeLoans->count() }} active</span>
         @endif
     </div>
 
-    <div class="card" style="margin-bottom:2rem;">
-        @if($activeLoans->isEmpty())
-            <div style="text-align:center;padding:3rem 0;color:var(--muted);">
-                <div style="font-size:2.5rem;margin-bottom:1rem;">📚</div>
-                <p>You have no active loans right now.</p>
-            </div>
-        @else
-            <div class="loans-list">
-                @foreach($activeLoans as $loan)
-                <div class="loan-card">
-                    @if($loan->book->cover_image)
-                        <img src="{{ $loan->book->cover_image }}" alt="" class="loan-cover">
-                    @else
-                        <div class="loan-cover" style="display:flex;align-items:center;justify-content:center;font-size:1.5rem;">📚</div>
-                    @endif
+    @if($activeLoans->isEmpty())
+        <div class="card" style="text-align:center;padding:3rem 2rem;color:var(--muted);margin-bottom:3rem;">
+            <div style="font-size:3rem;margin-bottom:1rem;">📖</div>
+            <h3 style="color:var(--text);font-weight:700;margin-bottom:0.5rem;">No active borrows</h3>
+            <p style="margin-bottom:1.5rem;">You do not have any books checked out at the moment.</p>
+            <a href="{{ route('member.books.index') }}" class="btn btn-primary btn-sm">Explore Books</a>
+        </div>
+    @else
+        <div class="loans-list" style="margin-bottom:3rem;">
+            @foreach($activeLoans as $loan)
+            @php $isOverdue = $loan->status === 'overdue'; @endphp
+            <div class="loan-card" style="{{ $isOverdue ? 'border-left: 4px solid var(--danger);' : 'border-left: 4px solid var(--accent);' }}">
+                @if($loan->book->cover_image)
+                    <img src="{{ $loan->book->cover_image }}" alt="" class="loan-cover">
+                @else
+                    <div class="loan-cover" style="display:flex;align-items:center;justify-content:center;font-size:1.75rem;">📚</div>
+                @endif
 
-                    <div class="loan-details">
-                        <div class="loan-title">{{ $loan->book->title }}</div>
-                        <div class="loan-meta">{{ $loan->book->author }}</div>
-                        <div class="loan-meta" style="margin-top:0.4rem;">
-                            Borrowed: {{ $loan->borrowed_at->format('d M Y') }} &nbsp;•&nbsp; Due: {{ $loan->due_date->format('d M Y') }}
+                <div class="loan-details">
+                    <div class="loan-title">{{ $loan->book->title }}</div>
+                    <div class="loan-meta">by {{ $loan->book->author }}</div>
+                    <div class="loan-meta" style="margin-top:0.6rem; display:flex; flex-wrap:wrap; gap:0.5rem 1rem; font-size:0.8rem;">
+                        <span>📅 Borrowed: <strong style="color:var(--text)">{{ $loan->borrowed_at->format('d M Y') }}</strong></span>
+                        <span>⏳ Due: <strong style="{{ $isOverdue ? 'color:var(--danger)' : 'color:var(--text)' }}">{{ $loan->due_date->format('d M Y') }}</strong></span>
+                    </div>
+                    @if($loan->penalty_amount > 0)
+                        <div class="loan-penalty">
+                            ⚠ Penalty: {{ number_format($loan->penalty_amount, 2) }} MAD ({{ $loan->days_overdue }} days overdue)
                         </div>
-                        @if($loan->penalty_amount > 0)
-                            <div class="loan-penalty">⚠ Penalty: {{ number_format($loan->penalty_amount, 2) }} MAD ({{ $loan->days_overdue }}d overdue)</div>
-                        @endif
-                    </div>
-
-                    <div class="loan-actions">
-                        <span class="badge badge-{{ $loan->status }}">{{ ucfirst($loan->status) }}</span>
-                        @if(in_array($loan->status, ['active','overdue']))
-                            <form method="POST" action="{{ route('member.loans.return', $loan) }}">
-                                @csrf @method('PATCH')
-                                <button type="submit" class="btn btn-success btn-sm">Return Book</button>
-                            </form>
-                        @endif
-                    </div>
+                    @endif
                 </div>
-                @endforeach
+
+                <div class="loan-actions">
+                    <span class="badge badge-{{ $loan->status }}" style="margin-bottom: 0.25rem;">{{ ucfirst($loan->status) }}</span>
+                    <form method="POST" action="{{ route('member.loans.return', $loan) }}">
+                        @csrf @method('PATCH')
+                        <button type="submit" class="btn btn-success btn-sm">Return Book</button>
+                    </form>
+                </div>
             </div>
-        @endif
-    </div>
+            @endforeach
+        </div>
+    @endif
 
     {{-- ── Returned / History ───────────────────────── --}}
     @if($returnedLoans->count())
